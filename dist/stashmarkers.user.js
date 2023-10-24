@@ -11,8 +11,8 @@
 // @connect     localhost
 // @run-at      document-idle
 // @require     https://raw.githubusercontent.com/7dJx1qP/stash-userscripts/master/src/StashUserscriptLibrary.js
-// @downloadURL https:/github.com/cc1234475/stashmarkers/raw/master/dist/bundle.js
-// @updateURL   https:/github.com/cc1234475/stashmarkers/raw/master/dist/bundle.js
+// @downloadURL https:/github.com/cc1234475/stashmarkers/raw/master/dist/stashmarkers.user.js
+// @updateURL   https:/github.com/cc1234475/stashmarkers/raw/master/dist/stashmarkers.user.js
 // @grant       GM_addStyle
 // @grant       GM_getResourceText
 // @grant       GM_xmlhttpRequest
