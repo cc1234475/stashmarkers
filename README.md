@@ -14,7 +14,7 @@ Installation requires a browser extension such as [Violentmonkey](https://violen
 >
 > Find the line `// @match       http://localhost:9999/*` and replace `http://localhost:9999/*` with your Stash address.
 
-[INSTALL USERSCRIPT](dist/bundle.js?raw=1)
+[INSTALL USERSCRIPT](dist/stashmarkers.user.js?raw=1)
 
 Once installed, A new icon will show on a scene's page next to the organized button.
 

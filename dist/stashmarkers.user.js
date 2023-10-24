@@ -5,14 +5,14 @@
 // @version     0.1.0
 // @homepage    https://github.com/cc1234475
 // @author      cc12344567
-// @resource    css https:/github.com/cc1234475/stashtag/raw/master/dist/bundle.css
-// @match       https://nozomi.whatbox.ca:15835/*
+// @resource    css https:/github.com/cc1234475/stashmarkers/raw/master/dist/bundle.css
+// @match       http://localhost:9999/*
 // @connect     hf.space
 // @connect     localhost
 // @run-at      document-idle
 // @require     https://raw.githubusercontent.com/7dJx1qP/stash-userscripts/master/src/StashUserscriptLibrary.js
-// @downloadURL https:/github.com/cc1234475/stashtag/raw/master/dist/bundle.js
-// @updateURL   https:/github.com/cc1234475/stashtag/raw/master/dist/bundle.js
+// @downloadURL https:/github.com/cc1234475/stashmarkers/raw/master/dist/bundle.js
+// @updateURL   https:/github.com/cc1234475/stashmarkers/raw/master/dist/bundle.js
 // @grant       GM_addStyle
 // @grant       GM_getResourceText
 // @grant       GM_xmlhttpRequest

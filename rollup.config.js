@@ -16,7 +16,7 @@ export default {
 		sourcemap: false,
 		format: 'iife',
 		name: 'app',
-		file: 'dist/bundle.js'
+		file: 'dist/stashmarkers.user.js'
 	},
 	plugins: [
 
