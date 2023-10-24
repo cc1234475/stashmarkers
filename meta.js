@@ -38,15 +38,15 @@ meta.require = [];
 
 if(!production){
 	meta.require = [
-        pathToFileURL(path.join(baseUrl, 'bundle.js'))
+        pathToFileURL(path.join(baseUrl, 'stashmarkers.user.js'))
     ];
 }
 
 meta.require = [...meta.require, 'https://raw.githubusercontent.com/7dJx1qP/stash-userscripts/master/src/StashUserscriptLibrary.js']
 
 if(production) {
-	meta.downloadURL = path.join(baseUrl, 'bundle.js');
-	meta.updateURL = path.join(baseUrl, 'bundle.js');
+	meta.downloadURL = path.join(baseUrl, 'stashmarkers.user.js');
+	meta.updateURL = path.join(baseUrl, 'stashmarkers.user.js');
 }
 
 module.exports = meta;
