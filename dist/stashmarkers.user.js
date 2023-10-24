@@ -5,14 +5,14 @@
 // @version     0.1.0
 // @homepage    https://github.com/cc1234475
 // @author      cc12344567
-// @resource    css https:/github.com/cc1234475/stashmarkers/raw/master/dist/bundle.css
+// @resource    css https:/raw.githubusercontent.com/cc1234475/stashmarkers/main/dist/bundle.css
 // @match       http://localhost:9999/*
 // @connect     hf.space
 // @connect     localhost
 // @run-at      document-idle
 // @require     https://raw.githubusercontent.com/7dJx1qP/stash-userscripts/master/src/StashUserscriptLibrary.js
-// @downloadURL https:/github.com/cc1234475/stashmarkers/raw/master/dist/stashmarkers.user.js
-// @updateURL   https:/github.com/cc1234475/stashmarkers/raw/master/dist/stashmarkers.user.js
+// @downloadURL https:/raw.githubusercontent.com/cc1234475/stashmarkers/main/dist/stashmarkers.user.js
+// @updateURL   https:/raw.githubusercontent.com/cc1234475/stashmarkers/main/dist/stashmarkers.user.js
 // @grant       GM_addStyle
 // @grant       GM_getResourceText
 // @grant       GM_xmlhttpRequest

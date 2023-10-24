@@ -2,7 +2,7 @@ const path = require('path');
 const { pathToFileURL } = require('url');
 const pkg = require('./package.json');
 
-const distURLBase = `https://github.com/cc1234475/stashmarkers/raw/master/dist`;
+const distURLBase = `https://raw.githubusercontent.com/cc1234475/stashmarkers/main/dist/`;
 const packageName = pkg.name;
 
 const production = !process.env.ROLLUP_WATCH;
