@@ -1,7 +1,7 @@
 const { stash } = unsafeWindow.stash;
 
-// export let STASHMARKER_API_URL = "http://localhost:7860/api/predict_1";
-export let STASHMARKER_API_URL = "https://cc1234-stashtag.hf.space/api/predict_1";
+export let STASHMARKER_API_URL = "http://localhost:7860/api/predict_1";
+// export let STASHMARKER_API_URL = "https://cc1234-stashtag.hf.space/api/predict_1";
 
 export var OPTIONS = [
   "Anal",
@@ -98,16 +98,22 @@ export async function getAllTags() {
   }, {});
 }
 
-export function getUrlSprite() {
-  let hash = document.querySelector(
-    "div.fade.file-info-panel.tab-pane > div > dl > dd:nth-child(2) > div"
-  ).innerHTML;
-  let url =
-    window.location.protocol +
-    "//" +
-    window.location.host +
-    "/scene/" +
-    hash +
-    "_sprite.jpg";
-  return url;
+export async function getUrlSprite(scene_id) {
+  const reqData = {
+    query: `{
+      findScene(id: ${scene_id}){
+        paths{
+          sprite
+        }
+      }
+    }`,
+  };
+  var result = await stash.callGQL(reqData);
+  const url = result.data.findScene.paths["sprite"];
+  const response = await fetch(url);
+  if (response.status === 404) {
+    return null;
+  } else {
+    return result.data.findScene.paths["sprite"];
+  }
 }

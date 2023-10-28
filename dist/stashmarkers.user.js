@@ -2,7 +2,7 @@
 // @name        stashmarkers
 // @description Generate markers for a scene
 // @namespace   https://github.com/cc1234475
-// @version     0.1.1
+// @version     0.1.2
 // @homepage    https://github.com/cc1234475
 // @author      cc12344567
 // @resource    css https://raw.githubusercontent.com/cc1234475/stashmarkers/main/dist/bundle.css
@@ -24,8 +24,8 @@ GM_addStyle(GM_getResourceText('css'));
 
   const { stash: stash$1 } = unsafeWindow.stash;
 
-  // export let STASHMARKER_API_URL = "http://localhost:7860/api/predict_1";
-  let STASHMARKER_API_URL = "https://cc1234-stashtag.hf.space/api/predict_1";
+  let STASHMARKER_API_URL = "http://localhost:7860/api/predict_1";
+  // export let STASHMARKER_API_URL = "https://cc1234-stashtag.hf.space/api/predict_1";
 
   var OPTIONS = [
     "Anal",
@@ -122,18 +122,24 @@ GM_addStyle(GM_getResourceText('css'));
     }, {});
   }
 
-  function getUrlSprite() {
-    let hash = document.querySelector(
-      "div.fade.file-info-panel.tab-pane > div > dl > dd:nth-child(2) > div"
-    ).innerHTML;
-    let url =
-      window.location.protocol +
-      "//" +
-      window.location.host +
-      "/scene/" +
-      hash +
-      "_sprite.jpg";
-    return url;
+  async function getUrlSprite(scene_id) {
+    const reqData = {
+      query: `{
+      findScene(id: ${scene_id}){
+        paths{
+          sprite
+        }
+      }
+    }`,
+    };
+    var result = await stash$1.callGQL(reqData);
+    const url = result.data.findScene.paths["sprite"];
+    const response = await fetch(url);
+    if (response.status === 404) {
+      return null;
+    } else {
+      return result.data.findScene.paths["sprite"];
+    }
   }
 
   function noop() { }
@@ -1677,7 +1683,14 @@ GM_addStyle(GM_getResourceText('css'));
 
   	async function getMarkers() {
   		$$invalidate(0, scanner = true);
-  		let url = getUrlSprite();
+  		const [,scene_id] = getScenarioAndID();
+  		let url = await getUrlSprite(scene_id);
+
+  		if (!url) {
+  			alert("No sprite found, please ensure you have sprites enabled and generated for your scenes.");
+  			$$invalidate(0, scanner = false);
+  			return;
+  		}
 
   		// get image blob
   		const iblob = await fetch(url).then(res => res.blob());

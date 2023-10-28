@@ -1,5 +1,5 @@
 <script lang="ts">
-  import {  getUrlSprite, STASHMARKER_API_URL  } from "./utils";
+  import {  getScenarioAndID, getUrlSprite, STASHMARKER_API_URL  } from "./utils";
   import Match from "./Matches.svelte";
   import type { Frame } from "./types";
 
@@ -7,7 +7,14 @@
 
   async function getMarkers() {
     scanner = true;
-    let url = getUrlSprite();
+    const [, scene_id] = getScenarioAndID();
+    let url = await getUrlSprite(scene_id);
+
+    if (!url) {
+      alert("No sprite found, please ensure you have sprites enabled and generated for your scenes.");
+      scanner = false;
+      return;
+    }
 
     // get image blob
     const iblob = await fetch(url).then(res => res.blob());
