@@ -24,8 +24,8 @@ GM_addStyle(GM_getResourceText('css'));
 
   const { stash: stash$1 } = unsafeWindow.stash;
 
-  let STASHMARKER_API_URL = "http://localhost:7860/api/predict_1";
-  // export let STASHMARKER_API_URL = "https://cc1234-stashtag.hf.space/api/predict_1";
+  // export let STASHMARKER_API_URL = "http://localhost:7860/api/predict_1";
+  let STASHMARKER_API_URL = "https://cc1234-stashtag.hf.space/api/predict_1";
 
   var OPTIONS = [
     "Anal",

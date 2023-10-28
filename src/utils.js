@@ -1,7 +1,7 @@
 const { stash } = unsafeWindow.stash;
 
-export let STASHMARKER_API_URL = "http://localhost:7860/api/predict_1";
-// export let STASHMARKER_API_URL = "https://cc1234-stashtag.hf.space/api/predict_1";
+// export let STASHMARKER_API_URL = "http://localhost:7860/api/predict_1";
+export let STASHMARKER_API_URL = "https://cc1234-stashtag.hf.space/api/predict_1";
 
 export var OPTIONS = [
   "Anal",
