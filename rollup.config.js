@@ -1,6 +1,5 @@
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
-import { terser } from 'rollup-plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import metablock from 'rollup-plugin-userscript-metablock';
 import svelte from 'rollup-plugin-svelte';
@@ -62,10 +61,6 @@ export default {
 			sourceMap: !production,
 			inlineSources: !production
 		}),
-
-		// If we're building for production (npm run build
-		// instead of npm run dev), minify
-		production && terser(),
 
 		metablock({ file: './meta.js' }),
 	],

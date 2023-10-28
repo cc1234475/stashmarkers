@@ -6,7 +6,7 @@ To be used with [Stash](https://github.com/stashapp/stash)
 
 # Stash Userscripts
 
-Installation requires a browser extension such as [Violentmonkey](https://violentmonkey.github.io/) / [Tampermonkey](https://www.tampermonkey.net/) / [Greasemonkey](https://www.greasespot.net/).
+Installation requires the browser extension [Tampermonkey](https://www.tampermonkey.net/) 
 
 **By default the userscripts only work for `http://localhost:9999`**
 
@@ -18,4 +18,5 @@ Installation requires a browser extension such as [Violentmonkey](https://violen
 
 Once installed, A new icon will show on a scene's page next to the organized button.
 
-![](_media/tag_scan_icon.png)
+![](_media/marker_scan_icon.png)
+
