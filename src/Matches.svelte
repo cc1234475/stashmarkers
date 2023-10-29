@@ -27,8 +27,8 @@
 
   async function playVideoAtTime(time) {
     const video = getCurrentVideo();
+    await video.play();
     video.currentTime = time;
-    video.play();
   }
 
   function confidence(prob) {
@@ -80,17 +80,45 @@
   }
 
   function saveAll() {
+    selected = null;
     saving = true;
-    frames.forEach(async (frame) => {
+    filteredFrames.forEach(async (frame) => {
       await addMarker(frame);
     });
     saving = false;
+    window.location.reload();
     close();
   }
 
   function changeThreshold() {
     localStorage.setItem("stash-marker-threshold", String(threshold));
   }
+
+  function scrubberMove(event){
+    let target = event.target;
+    let imageWidth = 160;
+    let backgroundPosition = target.style.backgroundPosition.split(' ');
+    let offset = Number(target.getAttribute('data-offset').split(',')[0]);
+
+    if (event.offsetX < 53) {
+      backgroundPosition[0] = `-${offset - imageWidth }px`;
+      target.style.backgroundPosition = backgroundPosition.join(' ');
+    } else if (event.offsetX > 53 && event.offsetX < imageWidth && event.offsetX < 106) {
+      backgroundPosition[0] = `-${offset}px`;
+      target.style.backgroundPosition = backgroundPosition.join(' ');
+    } else if (event.offsetX > 106) {
+      backgroundPosition[0] = `-${offset + imageWidth }px`;
+      target.style.backgroundPosition = backgroundPosition.join(' ');
+    }
+  }
+
+  function scrubberReset(event){
+    let backgroundPosition = event.target.style.backgroundPosition.split(' ');
+    let offset = Number(event.target.getAttribute('data-offset').split(',')[0]);
+    backgroundPosition[0] = `-${offset}px`;
+    event.target.style.backgroundPosition = backgroundPosition.join(' ');
+  }
+
 </script>
 
 <div bind:this={self} class="tagger-tabs">
@@ -99,7 +127,7 @@
       <div class="modal-header">
         Threshold: <input
           type="range"
-          min="0.1"
+          min="0.4"
           max="0.9"
           step="0.1"
           bind:value={threshold}
@@ -123,9 +151,10 @@
                 <div
                   class="scrubber-item"
                   on:click={() => {select(frame)}}
-                  style="background-position: -{frame.offset[0]}px -{frame
-                    .offset[1]}px; 
-                         background-image: url(&quot;{url}&quot;);"
+                  on:mousemove={scrubberMove}
+                  on:mouseleave={scrubberReset}
+                  style="background-position: -{frame.offset[0]}px -{frame.offset[1]}px; background-image: url('{url}');"
+                  data-offset={frame.offset}
                 />
                 <div class="progress" style="height: 5px">
                   <div

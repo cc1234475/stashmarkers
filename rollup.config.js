@@ -6,6 +6,7 @@ import svelte from 'rollup-plugin-svelte';
 import css from 'rollup-plugin-css-only';
 import sveltePreprocess from 'svelte-preprocess';
 import MagicString from 'magic-string';
+import replace from '@rollup/plugin-replace';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -63,6 +64,11 @@ export default {
 		}),
 
 		metablock({ file: './meta.js' }),
+		replace({
+			'https:/raw.': 'https://raw.',
+			'_STASHMARKER_API_URL': production ? 'https://cc1234-stashtag.hf.space/api/predict_1' : 'http://localhost:7860/api/predict_1'
+		  })
+
 	],
 	watch: {
 		clearScreen: false

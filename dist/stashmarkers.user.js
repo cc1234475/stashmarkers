@@ -2,7 +2,7 @@
 // @name        stashmarkers
 // @description Generate markers for a scene
 // @namespace   https://github.com/cc1234475
-// @version     0.1.2
+// @version     0.1.3
 // @homepage    https://github.com/cc1234475
 // @author      cc12344567
 // @resource    css https://raw.githubusercontent.com/cc1234475/stashmarkers/main/dist/bundle.css
@@ -24,7 +24,6 @@ GM_addStyle(GM_getResourceText('css'));
 
   const { stash: stash$1 } = unsafeWindow.stash;
 
-  // export let STASHMARKER_API_URL = "http://localhost:7860/api/predict_1";
   let STASHMARKER_API_URL = "https://cc1234-stashtag.hf.space/api/predict_1";
 
   var OPTIONS = [
@@ -1014,7 +1013,7 @@ GM_addStyle(GM_getResourceText('css'));
   	return child_ctx;
   }
 
-  // (150:20) {#each OPTIONS as name}
+  // (177:20) {#each OPTIONS as name}
   function create_each_block_1(ctx) {
   	let option;
   	let t_value = /*name*/ ctx[23] + "";
@@ -1039,11 +1038,12 @@ GM_addStyle(GM_getResourceText('css'));
   	};
   }
 
-  // (99:10) {#each filteredFrames as frame (frame.id)}
+  // (125:10) {#each filteredFrames as frame (frame.id)}
   function create_each_block(key_1, ctx) {
   	let div5;
   	let div4;
   	let div0;
+  	let div0_data_offset_value;
   	let t0;
   	let div2;
   	let div1;
@@ -1116,7 +1116,8 @@ GM_addStyle(GM_getResourceText('css'));
   			t4 = space();
   			attr(div0, "class", "scrubber-item svelte-lsuukb");
   			set_style(div0, "background-position", "-" + /*frame*/ ctx[20].offset[0] + "px -" + /*frame*/ ctx[20].offset[1] + "px");
-  			set_style(div0, "background-image", "url(\"" + /*url*/ ctx[1] + "\")");
+  			set_style(div0, "background-image", "url('" + /*url*/ ctx[1] + "')");
+  			attr(div0, "data-offset", div0_data_offset_value = /*frame*/ ctx[20].offset);
   			attr(div1, "class", div1_class_value = "progress-bar progress-bar-striped bg-" + confidence(/*frame*/ ctx[20].tag.prob) + " svelte-lsuukb");
   			attr(div1, "role", "progressbar");
   			set_style(div1, "width", /*frame*/ ctx[20].tag.prob * 100 + "%");
@@ -1172,6 +1173,8 @@ GM_addStyle(GM_getResourceText('css'));
   			if (!mounted) {
   				dispose = [
   					listen(div0, "click", click_handler),
+  					listen(div0, "mousemove", scrubberMove),
+  					listen(div0, "mouseleave", scrubberReset),
   					listen(div3, "click", click_handler_1, { once: true }),
   					listen(select_1, "change", select_1_change_handler),
   					listen(svg1, "click", click_handler_2, { once: true })
@@ -1188,7 +1191,11 @@ GM_addStyle(GM_getResourceText('css'));
   			}
 
   			if (!current || dirty & /*url*/ 2) {
-  				set_style(div0, "background-image", "url(\"" + /*url*/ ctx[1] + "\")");
+  				set_style(div0, "background-image", "url('" + /*url*/ ctx[1] + "')");
+  			}
+
+  			if (!current || dirty & /*filteredFrames, OPTIONS*/ 32 && div0_data_offset_value !== (div0_data_offset_value = /*frame*/ ctx[20].offset)) {
+  				attr(div0, "data-offset", div0_data_offset_value);
   			}
 
   			if (!current || dirty & /*filteredFrames, OPTIONS*/ 32 && div1_class_value !== (div1_class_value = "progress-bar progress-bar-striped bg-" + confidence(/*frame*/ ctx[20].tag.prob) + " svelte-lsuukb")) {
@@ -1278,7 +1285,7 @@ GM_addStyle(GM_getResourceText('css'));
   	};
   }
 
-  // (184:12) {#if saving}
+  // (211:12) {#if saving}
   function create_if_block(ctx) {
   	let div;
 
@@ -1362,7 +1369,7 @@ GM_addStyle(GM_getResourceText('css'));
   			if (if_block) if_block.c();
   			t8 = text("\n            Add All Tags");
   			attr(input, "type", "range");
-  			attr(input, "min", "0.1");
+  			attr(input, "min", "0.4");
   			attr(input, "max", "0.9");
   			attr(input, "step", "0.1");
   			attr(input, "id", "stash-tag-threshold");
@@ -1433,7 +1440,7 @@ GM_addStyle(GM_getResourceText('css'));
 
   			if ((!current || dirty & /*threshold*/ 1) && t2_value !== (t2_value = /*threshold*/ ctx[0] * 100 + "")) set_data(t2, t2_value);
 
-  			if (dirty & /*selected, filteredFrames, remove, OPTIONS, addMarker, confidence, url, select*/ 938) {
+  			if (dirty & /*selected, filteredFrames, remove, OPTIONS, addMarker, confidence, url, select, scrubberMove, scrubberReset*/ 938) {
   				each_value = /*filteredFrames*/ ctx[5];
   				group_outros();
   				for (let i = 0; i < each_blocks.length; i += 1) each_blocks[i].r();
@@ -1490,8 +1497,8 @@ GM_addStyle(GM_getResourceText('css'));
 
   async function playVideoAtTime(time) {
   	const video = getCurrentVideo();
+  	await video.play();
   	video.currentTime = time;
-  	video.play();
   }
 
   function confidence(prob) {
@@ -1504,6 +1511,31 @@ GM_addStyle(GM_getResourceText('css'));
   	} else {
   		return "success";
   	}
+  }
+
+  function scrubberMove(event) {
+  	let target = event.target;
+  	let imageWidth = 160;
+  	let backgroundPosition = target.style.backgroundPosition.split(' ');
+  	let offset = Number(target.getAttribute('data-offset').split(',')[0]);
+
+  	if (event.offsetX < 53) {
+  		backgroundPosition[0] = `-${offset - imageWidth}px`;
+  		target.style.backgroundPosition = backgroundPosition.join(' ');
+  	} else if (event.offsetX > 53 && event.offsetX < imageWidth && event.offsetX < 106) {
+  		backgroundPosition[0] = `-${offset}px`;
+  		target.style.backgroundPosition = backgroundPosition.join(' ');
+  	} else if (event.offsetX > 106) {
+  		backgroundPosition[0] = `-${offset + imageWidth}px`;
+  		target.style.backgroundPosition = backgroundPosition.join(' ');
+  	}
+  }
+
+  function scrubberReset(event) {
+  	let backgroundPosition = event.target.style.backgroundPosition.split(' ');
+  	let offset = Number(event.target.getAttribute('data-offset').split(',')[0]);
+  	backgroundPosition[0] = `-${offset}px`;
+  	event.target.style.backgroundPosition = backgroundPosition.join(' ');
   }
 
   function instance$1($$self, $$props, $$invalidate) {
@@ -1556,13 +1588,15 @@ GM_addStyle(GM_getResourceText('css'));
   	}
 
   	function saveAll() {
+  		$$invalidate(3, selected = null);
   		$$invalidate(4, saving = true);
 
-  		frames.forEach(async frame => {
+  		filteredFrames.forEach(async frame => {
   			await addMarker(frame);
   		});
 
   		$$invalidate(4, saving = false);
+  		window.location.reload();
   		close();
   	}
 
