@@ -2,7 +2,7 @@
 // @name        stashmarkers
 // @description Generate markers for a scene
 // @namespace   https://github.com/cc1234475
-// @version     0.1.4
+// @version     0.1.5
 // @homepage    https://github.com/cc1234475
 // @author      cc12344567
 // @resource    css https://raw.githubusercontent.com/cc1234475/stashmarkers/main/dist/bundle.css
@@ -1018,7 +1018,7 @@ GM_addStyle(GM_getResourceText('css'));
   		c() {
   			option = element("option");
   			t = text(t_value);
-  			set_style(option, "color", "#f5f8fa");
+  			set_style(option, "background-color", "var(--gray)");
   			option.__value = /*name*/ ctx[7];
   			option.value = option.__value;
   		},

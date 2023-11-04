@@ -96,7 +96,7 @@
       class="tag-item-select"
     >
       {#each OPTIONS as name}
-        <option style="color: #f5f8fa" value={name}>{name}</option>
+        <option style="background-color: var(--gray);" value={name}>{name}</option>
       {/each}
     </select>
     <svg
