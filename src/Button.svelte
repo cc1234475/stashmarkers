@@ -5,6 +5,15 @@
 
   let scanner = false;
 
+  async function download(url){
+    const vblob = await fetch(url).then(res => res.blob());
+    return new Promise(resolve => {
+      let reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.readAsDataURL(vblob);
+    });
+  }
+
   async function getMarkers() {
     scanner = true;
     const [, scene_id] = getScenarioAndID();
@@ -17,21 +26,11 @@
     }
 
     // get image blob
-    const iblob = await fetch(url).then(res => res.blob());
-    let image = await new Promise(resolve => {
-      let reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.readAsDataURL(iblob);
-    });
+    let image = await download(url);
 
     // get vtt blob
     const vtt_url = url.replace("_sprite.jpg", "_thumbs.vtt");
-    const vblob = await fetch(vtt_url).then(res => res.blob());
-    let vtt = await new Promise(resolve => {
-      let reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.readAsDataURL(vblob);
-    });
+    let vtt = await download(vtt_url);
     // query the api with a threshold of 0.4 as we want to do the filtering ourselves
     var data = {"data": [image, vtt, 0.4]};
     var requestDetails = {
@@ -56,7 +55,11 @@
       },
       onerror: function (response) {
         scanner = false;
-        alert("Error: " + response.responseText);
+        if (response.responseText == ""){
+          alert("Error: Service may be down. please try again later.");
+        }else{
+          alert("Error: " + response.responseText);
+        }
       },
     };
     GM_xmlhttpRequest(requestDetails);
