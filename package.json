@@ -3,7 +3,7 @@
   "version": "0.1.5",
   "description": "Generate markers for a scene",
   "author": "cc12344567",
-  "homepage": "https://github.com/cc1234475",
+  "homepage": "https://github.com/cc1234475/stashmarkers",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",

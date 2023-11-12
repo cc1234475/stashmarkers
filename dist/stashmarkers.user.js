@@ -3,7 +3,7 @@
 // @description Generate markers for a scene
 // @namespace   https://github.com/cc1234475
 // @version     0.1.5
-// @homepage    https://github.com/cc1234475
+// @homepage    https://github.com/cc1234475/stashmarkers
 // @author      cc12344567
 // @resource    css https://raw.githubusercontent.com/cc1234475/stashmarkers/main/dist/bundle.css
 // @match       http://localhost:9999/*
