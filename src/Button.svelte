@@ -39,7 +39,17 @@
       data: JSON.stringify(data),
       headers: {"Content-Type": "application/json; charset=utf-8"},
       onload: function (response) {
-        var data = JSON.parse(response.responseText);
+        if (response.status !== 200) {
+            scanner = false;
+            alert("Something went wrong. It's likely a server issue, Please try again later.")
+            return;
+        }
+        try {
+          var data = JSON.parse(response.responseText);
+        } catch (e) {
+          alert("Error: " + response.responseText);
+          return;
+        }
         let frames: Frame[] = data.data[0]
         scanner = false;
         if (frames.length === 0) {

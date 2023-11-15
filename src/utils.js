@@ -53,6 +53,10 @@ export function waitForElm(selector) {
   });
 }
 
+/**
+ * Returns an array with the scenario and scenario ID parsed from the current URL.
+ * @returns {Array<string>} An array with the scenario and scenario ID.
+ */
 export function getScenarioAndID() {
   var result = document.URL.match(/(scenes|images)\/(\d+)/);
   var scenario = result[1];
@@ -60,6 +64,32 @@ export function getScenarioAndID() {
   return [scenario, scenario_id];
 }
 
+/**
+ * Creates a new tag with the given name.
+ * @param {string} tag_name - The name of the tag to create.
+ * @returns {Promise<string>} - A Promise that resolves with the ID of the newly created tag.
+ */
+export async function createTag(tag_name) {
+  const reqData = {
+    variables: { input: {name: tag_name} },
+    query: `mutation tagCreate($input: TagCreateInput!) {
+      tagCreate(input: $input){
+            id
+        }
+      }`,
+  };
+  let result = await stash.callGQL(reqData);
+  return result.data.tagCreate.id;
+}
+
+
+/**
+ * Creates a marker for a scene with the given parameters.
+ * @param {string} scene_id - The ID of the scene.
+ * @param {string} primary_tag_id - The ID of the primary tag.
+ * @param {number} seconds - The number of seconds for the marker.
+ * @returns {Promise<string>} - The ID of the created marker.
+ */
 export async function createMarker(scene_id, primary_tag_id, seconds) {
   const reqData = {
     variables: {
@@ -77,6 +107,10 @@ export async function createMarker(scene_id, primary_tag_id, seconds) {
   return result.data.sceneMarkerCreate.id;
 }
 
+/**
+ * Retrieves all tags from the server and returns them as an object with tag names as keys and tag IDs as values.
+ * @returns {Promise<Object>} An object with tag names as keys and tag IDs as values.
+ */
 export async function getAllTags() {
   const reqData = {
     query: `{
@@ -89,14 +123,19 @@ export async function getAllTags() {
   };
   var result = await stash.callGQL(reqData);
   return result.data.allTags.reduce((map, obj) => {
-    map[obj.name] = obj.id;
+    map[obj.name.toLowerCase()] = obj.id;
     obj.aliases.forEach((alias) => {
-      map[alias] = obj.id;
+      map[alias.toLowerCase()] = obj.id;
     });
     return map;
   }, {});
 }
 
+/**
+ * Retrieves the URL of the sprite for a given scene ID.
+ * @param {number} scene_id - The ID of the scene to retrieve the sprite URL for.
+ * @returns {Promise<string|null>} - A Promise that resolves with the sprite URL if it exists, or null if it does not.
+ */
 export async function getUrlSprite(scene_id) {
   const reqData = {
     query: `{

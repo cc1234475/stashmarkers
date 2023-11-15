@@ -2,7 +2,7 @@
 // @name        stashmarkers
 // @description Generate markers for a scene
 // @namespace   https://github.com/cc1234475
-// @version     0.1.5
+// @version     0.2.0
 // @homepage    https://github.com/cc1234475/stashmarkers
 // @author      cc12344567
 // @resource    css https://raw.githubusercontent.com/cc1234475/stashmarkers/main/dist/bundle.css
@@ -77,6 +77,10 @@ GM_addStyle(GM_getResourceText('css'));
     });
   }
 
+  /**
+   * Returns an array with the scenario and scenario ID parsed from the current URL.
+   * @returns {Array<string>} An array with the scenario and scenario ID.
+   */
   function getScenarioAndID() {
     var result = document.URL.match(/(scenes|images)\/(\d+)/);
     var scenario = result[1];
@@ -84,6 +88,32 @@ GM_addStyle(GM_getResourceText('css'));
     return [scenario, scenario_id];
   }
 
+  /**
+   * Creates a new tag with the given name.
+   * @param {string} tag_name - The name of the tag to create.
+   * @returns {Promise<string>} - A Promise that resolves with the ID of the newly created tag.
+   */
+  async function createTag(tag_name) {
+    const reqData = {
+      variables: { input: {name: tag_name} },
+      query: `mutation tagCreate($input: TagCreateInput!) {
+      tagCreate(input: $input){
+            id
+        }
+      }`,
+    };
+    let result = await stash$1.callGQL(reqData);
+    return result.data.tagCreate.id;
+  }
+
+
+  /**
+   * Creates a marker for a scene with the given parameters.
+   * @param {string} scene_id - The ID of the scene.
+   * @param {string} primary_tag_id - The ID of the primary tag.
+   * @param {number} seconds - The number of seconds for the marker.
+   * @returns {Promise<string>} - The ID of the created marker.
+   */
   async function createMarker(scene_id, primary_tag_id, seconds) {
     const reqData = {
       variables: {
@@ -101,6 +131,10 @@ GM_addStyle(GM_getResourceText('css'));
     return result.data.sceneMarkerCreate.id;
   }
 
+  /**
+   * Retrieves all tags from the server and returns them as an object with tag names as keys and tag IDs as values.
+   * @returns {Promise<Object>} An object with tag names as keys and tag IDs as values.
+   */
   async function getAllTags() {
     const reqData = {
       query: `{
@@ -113,14 +147,19 @@ GM_addStyle(GM_getResourceText('css'));
     };
     var result = await stash$1.callGQL(reqData);
     return result.data.allTags.reduce((map, obj) => {
-      map[obj.name] = obj.id;
+      map[obj.name.toLowerCase()] = obj.id;
       obj.aliases.forEach((alias) => {
-        map[alias] = obj.id;
+        map[alias.toLowerCase()] = obj.id;
       });
       return map;
     }, {});
   }
 
+  /**
+   * Retrieves the URL of the sprite for a given scene ID.
+   * @param {number} scene_id - The ID of the scene to retrieve the sprite URL for.
+   * @returns {Promise<string|null>} - A Promise that resolves with the sprite URL if it exists, or null if it does not.
+   */
   async function getUrlSprite(scene_id) {
     const reqData = {
       query: `{
@@ -1339,7 +1378,7 @@ GM_addStyle(GM_getResourceText('css'));
   	return child_ctx;
   }
 
-  // (88:10) {#each filteredFrames as frame (frame.id)}
+  // (93:10) {#each filteredFrames as frame (frame.id)}
   function create_each_block(key_1, ctx) {
   	let div;
   	let match;
@@ -1440,7 +1479,7 @@ GM_addStyle(GM_getResourceText('css'));
   	};
   }
 
-  // (109:12) {#if saving}
+  // (114:12) {#if saving}
   function create_if_block(ctx) {
   	let div;
 
@@ -1693,7 +1732,14 @@ GM_addStyle(GM_getResourceText('css'));
   	async function addMarker(frame) {
   		const [,scene_id] = getScenarioAndID();
   		let time;
-  		let tagId = tags[frame.tag.label];
+  		const tagLower = frame.tag.label.toLowerCase();
+
+  		if (tags[tagLower] === undefined) {
+  			const tagID = await createTag(tagLower);
+  			tags[tagLower] = tagID;
+  		}
+
+  		let tagId = tags[tagLower];
 
   		if (selected && selected === frame.id) {
   			const video = getCurrentVideo();
@@ -1870,7 +1916,19 @@ GM_addStyle(GM_getResourceText('css'));
   				"Content-Type": "application/json; charset=utf-8"
   			},
   			onload(response) {
-  				var data = JSON.parse(response.responseText);
+  				if (response.status !== 200) {
+  					$$invalidate(0, scanner = false);
+  					alert("Something went wrong. It's likely a server issue, Please try again later.");
+  					return;
+  				}
+
+  				try {
+  					var data = JSON.parse(response.responseText);
+  				} catch(e) {
+  					alert("Error: " + response.responseText);
+  					return;
+  				}
+
   				let frames = data.data[0];
   				$$invalidate(0, scanner = false);
 

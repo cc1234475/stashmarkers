@@ -4,7 +4,7 @@
   import { flip } from "svelte/animate";
   import { quintOut } from "svelte/easing";
   import { fade } from "svelte/transition";
-  import { createMarker, getAllTags, getScenarioAndID } from "./utils";
+  import { createMarker, getAllTags, createTag, getScenarioAndID } from "./utils";
 
   import { onMount } from "svelte";
   import type { Frame } from "./types";
@@ -57,7 +57,14 @@
     const [, scene_id] = getScenarioAndID();
 
     let time;
-    let tagId = tags[frame.tag.label];
+    const tagLower = frame.tag.label.toLowerCase();
+
+    if (tags[tagLower] === undefined) {
+      const tagID = await createTag(tagLower);
+      tags[tagLower] = tagID;
+    }
+    
+    let tagId = tags[tagLower];
 
     if (selected && selected === frame.id) {
       const video = getCurrentVideo();
